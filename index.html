@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>IZE Year-End Invitation</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
             background-color: #f4f4f9;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ff5722;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         img {
@@ -26,15 +32,34 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            width: 90%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4caf50;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+
         .button-container {
             display: flex;
             gap: 15px;
-            flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 20px;
         }
 
         button {
-            padding: 15px 30px;
+            width: 150px;
+            padding: 15px 0;
             font-size: 16px;
             font-weight: bold;
             color: #fff;
@@ -60,25 +85,128 @@
             background-color: #d32f2f;
         }
 
-        @media (max-width: 768px) {
-            button {
-                width: 100%;
-                max-width: 300px;
-            }
+        table {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
+        }
+
+        .status-accept {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .status-decline {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            font-size: 18px;
+            color: #f44336;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background-color: transparent; /* Nền trắng */
+            transition: color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            color: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <img src="https://i.ibb.co/cbnTXKS/final-yep.jpg" alt="Landing Page Image">
+    <h1>IZE Year-End Invitation!</h1>
+    <img src="https://i.ibb.co/cbnTXKS/final-yep.jpg" alt="Year End Party">
+    <input type="text" id="guestName" placeholder="Nhập tên của bạn">
     <div class="button-container">
-        <button onclick="recordResponse('Tham Gia')">Tham Gia</button>
-        <button onclick="recordResponse('Không Tham Gia')">Không Tham Gia</button>
+        <button onclick="handleResponse('Tham Gia')">Tham Gia</button>
+        <button onclick="handleResponse('Không Tham Gia')">Không Tham Gia</button>
     </div>
 
+    <table id="guestList" style="display: none;">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <script>
-        function recordResponse(response) {
-            console.log('Người dùng chọn:', response);
-            alert('Cảm ơn bạn đã chọn: ' + response);
+        let guests = [];
+
+        function handleResponse(response) {
+            const nameInput = document.getElementById('guestName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert('Vui lòng nhập tên trước khi chọn trạng thái!');
+                return;
+            }
+
+            guests.push({ name, response });
+            nameInput.value = ''; // Clear input
+            renderGuestList();
+        }
+
+        function renderGuestList() {
+            const guestList = document.getElementById('guestList');
+            const tbody = guestList.querySelector('tbody');
+            tbody.innerHTML = ''; // Xóa danh sách cũ
+
+            guests.forEach((guest, index) => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const actionCell = document.createElement('td');
+
+                nameCell.textContent = guest.name;
+                statusCell.textContent = guest.response;
+
+                if (guest.response === 'Tham Gia') {
+                    statusCell.classList.add('status-accept');
+                } else {
+                    statusCell.classList.add('status-decline');
+                }
+
+                // Dấu X để xóa
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'X';
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.onclick = () => deleteGuest(index);
+                actionCell.appendChild(deleteBtn);
+
+                row.appendChild(nameCell);
+                row.appendChild(statusCell);
+                row.appendChild(actionCell);
+                tbody.appendChild(row);
+            });
+
+            guestList.style.display = 'table'; // Hiển thị bảng
+        }
+
+        function deleteGuest(index) {
+            guests.splice(index, 1); // Xóa khách mời khỏi danh sách
+            renderGuestList(); // Cập nhật lại danh sách
         }
     </script>
 </body>
