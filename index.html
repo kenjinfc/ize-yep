@@ -122,7 +122,7 @@
             cursor: pointer;
             font-weight: bold;
             border: none;
-            background-color: transparent; /* Nền trắng */
+            background-color: transparent;
             transition: color 0.3s ease;
         }
 
@@ -152,7 +152,10 @@
     </table>
 
     <script>
-        let guests = [];
+        let guests = JSON.parse(localStorage.getItem('guests')) || []; // Lấy danh sách từ Local Storage
+
+        // Render danh sách sau khi tải trang
+        document.addEventListener('DOMContentLoaded', renderGuestList);
 
         function handleResponse(response) {
             const nameInput = document.getElementById('guestName');
@@ -164,6 +167,7 @@
             }
 
             guests.push({ name, response });
+            saveToLocalStorage(); // Lưu danh sách vào Local Storage
             nameInput.value = ''; // Clear input
             renderGuestList();
         }
@@ -201,12 +205,17 @@
                 tbody.appendChild(row);
             });
 
-            guestList.style.display = 'table'; // Hiển thị bảng
+            guestList.style.display = guests.length > 0 ? 'table' : 'none'; // Hiển thị bảng nếu có khách mời
         }
 
         function deleteGuest(index) {
             guests.splice(index, 1); // Xóa khách mời khỏi danh sách
+            saveToLocalStorage(); // Cập nhật Local Storage
             renderGuestList(); // Cập nhật lại danh sách
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('guests', JSON.stringify(guests)); // Lưu danh sách vào Local Storage
         }
     </script>
 </body>
