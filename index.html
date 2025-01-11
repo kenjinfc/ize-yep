@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20%;
+        }
+        img {
+            width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <img src="C:\Users\tieut\Desktop\logo_banner\final_yep.jpg" alt="Sample Image">
+    <div>
+        <button onclick="recordResponse('Tham Gia')">Tham Gia</button>
+        <button onclick="recordResponse('Không Tham Gia')">Không Tham Gia</button>
+    </div>
+
+    <script>
+        function recordResponse(response) {
+            console.log('Người dùng chọn:', response);
+            // Gửi dữ liệu về server (ví dụ sử dụng fetch hoặc AJAX)
+            alert('Cảm ơn bạn đã chọn: ' + response);
+        }
+    </script>
+</body>
+</html>
