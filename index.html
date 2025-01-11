@@ -4,28 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 20%;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
         }
+
         img {
-            width: 300px;
+            max-width: 100%;
             height: auto;
             margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         button {
-            margin: 10px;
-            padding: 10px 20px;
+            padding: 15px 30px;
             font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:first-child {
+            background-color: #4caf50;
+        }
+
+        button:first-child:hover {
+            background-color: #45a049;
+        }
+
+        button:last-child {
+            background-color: #f44336;
+        }
+
+        button:last-child:hover {
+            background-color: #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <img src="C:\Users\tieut\Desktop\logo_banner\final_yep.jpg" alt="Sample Image">
-    <div>
+    <img src="https://i.ibb.co/cbnTXKS/final-yep.jpg" alt="Landing Page Image">
+    <div class="button-container">
         <button onclick="recordResponse('Tham Gia')">Tham Gia</button>
         <button onclick="recordResponse('Không Tham Gia')">Không Tham Gia</button>
     </div>
@@ -33,7 +78,6 @@
     <script>
         function recordResponse(response) {
             console.log('Người dùng chọn:', response);
-            // Gửi dữ liệu về server (ví dụ sử dụng fetch hoặc AJAX)
             alert('Cảm ơn bạn đã chọn: ' + response);
         }
     </script>
