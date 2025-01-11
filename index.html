@@ -117,7 +117,7 @@
         }
 
         .delete-btn {
-            font-size: 18px;
+            font-size: 14px;
             color: #f44336;
             cursor: pointer;
             font-weight: bold;
@@ -132,15 +132,15 @@
     </style>
 </head>
 <body>
-    <h1>IZE Year-End Invitation!</h1>
-    <img src="https://i.ibb.co/cbnTXKS/final-yep.jpg" alt="Year End Party">
+    <h1>IZE Year-End Invitation</h1>
+    <img src="https://i.ibb.co/cbnTXKS/final-yep.jpg" alt="IZE Year-End Party">
     <input type="text" id="guestName" placeholder="Nhập tên của bạn">
     <div class="button-container">
         <button onclick="handleResponse('Tham Gia')">Tham Gia</button>
         <button onclick="handleResponse('Không Tham Gia')">Không Tham Gia</button>
     </div>
 
-    <table id="guestList" style="display: none;">
+    <table id="guestList">
         <thead>
             <tr>
                 <th>Tên</th>
@@ -148,16 +148,13 @@
                 <th>Hành Động</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="guestListBody"></tbody>
     </table>
 
     <script>
-        let guests = JSON.parse(localStorage.getItem('guests')) || []; // Lấy danh sách từ Local Storage
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzvFoohzIxPvcCIiHCK7-f_QqZTkFm1w6L0s4hemJpL-twLcXjJwDJyZW2vmzFo-V_3iA/exec'; // Thay bằng Web App URL của bạn
 
-        // Render danh sách sau khi tải trang
-        document.addEventListener('DOMContentLoaded', renderGuestList);
-
-        function handleResponse(response) {
+        async function handleResponse(status) {
             const nameInput = document.getElementById('guestName');
             const name = nameInput.value.trim();
 
@@ -166,57 +163,51 @@
                 return;
             }
 
-            guests.push({ name, response });
-            saveToLocalStorage(); // Lưu danh sách vào Local Storage
-            nameInput.value = ''; // Clear input
-            renderGuestList();
-        }
-
-        function renderGuestList() {
-            const guestList = document.getElementById('guestList');
-            const tbody = guestList.querySelector('tbody');
-            tbody.innerHTML = ''; // Xóa danh sách cũ
-
-            guests.forEach((guest, index) => {
-                const row = document.createElement('tr');
-                const nameCell = document.createElement('td');
-                const statusCell = document.createElement('td');
-                const actionCell = document.createElement('td');
-
-                nameCell.textContent = guest.name;
-                statusCell.textContent = guest.response;
-
-                if (guest.response === 'Tham Gia') {
-                    statusCell.classList.add('status-accept');
-                } else {
-                    statusCell.classList.add('status-decline');
-                }
-
-                // Dấu X để xóa
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = 'X';
-                deleteBtn.classList.add('delete-btn');
-                deleteBtn.onclick = () => deleteGuest(index);
-                actionCell.appendChild(deleteBtn);
-
-                row.appendChild(nameCell);
-                row.appendChild(statusCell);
-                row.appendChild(actionCell);
-                tbody.appendChild(row);
+            // Gửi yêu cầu thêm khách mời
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'add', name, status })
             });
 
-            guestList.style.display = guests.length > 0 ? 'table' : 'none'; // Hiển thị bảng nếu có khách mời
+            nameInput.value = ''; // Xóa input
+            loadGuestList(); // Cập nhật danh sách
         }
 
-        function deleteGuest(index) {
-            guests.splice(index, 1); // Xóa khách mời khỏi danh sách
-            saveToLocalStorage(); // Cập nhật Local Storage
-            renderGuestList(); // Cập nhật lại danh sách
+        async function loadGuestList() {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+
+            renderGuestList(data);
         }
 
-        function saveToLocalStorage() {
-            localStorage.setItem('guests', JSON.stringify(guests)); // Lưu danh sách vào Local Storage
+        function renderGuestList(data) {
+            const tbody = document.getElementById('guestListBody');
+            tbody.innerHTML = '';
+
+            data.slice(1).forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td><button class="delete-btn" onclick="deleteGuest(${index + 1})">Xóa</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
+
+        async function deleteGuest(row) {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', row })
+            });
+
+            loadGuestList(); // Cập nhật danh sách
+        }
+
+        // Tải danh sách khi trang được load
+        document.addEventListener('DOMContentLoaded', loadGuestList);
     </script>
 </body>
 </html>
